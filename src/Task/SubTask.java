@@ -1,37 +1,23 @@
-package Task;
-import Task.Epic;
+package task;
+
 /**
  * Класс SubTask представляет собой подзадачу, которая может быть связана с эпиком (Epic).
  * Подзадача наследует все поля и методы класса Task и дополнительно содержит ссылку на эпик.
  */
 public class SubTask extends Task {
     // Ссылка на эпик, к которому относится эта подзадача
-    protected Epic epic;
-
-    /**
-     * Конструктор для создания подзадачи без привязки к эпику.
-     *
-     * @param id          Уникальный идентификатор подзадачи
-     * @param name        Название подзадачи
-     * @param description Описание подзадачи
-     * @param status      Статус подзадачи (NEW, IN_PROGRESS, DONE)
-     */
-    public SubTask(int id, String name, String description, Status status) {
-        super(id, name, description, status); // Вызов конструктора родительского класса Task
-    }
+    private Epic epic;
 
     /**
      * Конструктор для создания подзадачи с привязкой к эпику.
-     *
-     * @param id          Уникальный идентификатор подзадачи
      * @param name        Название подзадачи
      * @param description Описание подзадачи
-     * @param status      Статус подзадачи (NEW, IN_PROGRESS, DONE)
      * @param epic        Эпик, к которому относится подзадача
      */
-    public SubTask(int id, String name, String description, Status status, Epic epic) {
-        super(id, name, description, status); // Вызов конструктора родительского класса Task
+    public SubTask(String name, String description, Epic epic) {
+        super(name, description); // Вызов конструктора родительского класса Task
         this.epic = epic; // Привязка подзадачи к эпику
+        this.status = Status.NEW;
     }
     /**
      * Метод для привязки подзадачи к эпику.

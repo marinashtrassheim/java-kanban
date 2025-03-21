@@ -1,7 +1,8 @@
-package Management;
-import Task.Task;
-import Task.SubTask;
-import Task.Epic;
+package management;
+import task.Status;
+import task.Task;
+import task.SubTask;
+import task.Epic;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,75 +19,65 @@ public class TaskManager {
     private HashMap<Integer, Epic> epics = new HashMap<>(); // Коллекция для хранения эпиков
     /**
      * Генерирует уникальный идентификатор для задачи.
-     *
      * @return Уникальный идентификатор (int)
      */
     public int generateId() {
         id++;
         return id;
     }
-
     /**
      * Добавляет задачу в коллекцию задач.
-     *
      * @param task Задача для добавления
      */
     public void createTask(Task task) {
-        tasks.put(task.getId(), task); // Добавляем задачу в коллекцию
+        int taskId = generateId();
+        task.setId(taskId); // Устанавливаем ID задачи
+        tasks.put(taskId, task);
     }
-
     /**
      * Добавляет подзадачу в коллекцию подзадач.
-     *
      * @param subTask Подзадача для добавления
      */
     public void createSubTask(SubTask subTask) {
-        subTasks.put(subTask.getId(), subTask);
+        int subTaskId = generateId();
+        subTask.setId(subTaskId);
+        subTasks.put(subTaskId, subTask);
+        Epic epic = subTask.getEpic();
+        if (epic != null) {
+            addSubtaskToEpic(epic, subTask);
+        }
     }
-
     /**
      * Добавляет эпик в коллекцию эпиков.
-     *
      * @param epic Эпик для добавления
      */
     public void createEpic(Epic epic) {
-        epics.put(epic.getId(), epic);
+        int epicId = generateId();
+        epic.setId(epicId);
+        epics.put(epicId, epic);
     }
     /**
      * Возвращает строковое представление всех задач.
-     *
      * @return Строка, содержащая информацию о всех задачах
      */
-    public String getAllTasks() {
-        String result = "";
-        for (Task task : tasks.values()) {
-            result += task.toString() + "\n"; // Конкатенация строк
-        }
-        return result;
+    public HashMap<Integer, Task> getAllTasks() {
+        return tasks;
     }
     /**
      * Возвращает строковое представление всех эпиков.
      *
      * @return Строка, содержащая информацию о всех эпиках
      */
-    public String getAllEpics() {
-        String result = "";
-        for (Epic epic : epics.values()) {
-            result += epic.toString() + "\n";
-        }
-        return result;
+    public HashMap<Integer, Epic> getAllEpics() {
+        return epics;
     }
     /**
      * Возвращает строковое представление всех подзадач.
      *
      * @return Строка, содержащая информацию о всех подзадачах
      */
-    public String getAllSubTasks() {
-        String result = "";
-        for (SubTask subTask : subTasks.values()) {
-            result += subTask.toString() + "\n";
-        }
-        return result;
+    public HashMap<Integer, SubTask> getAllSubTasks() {
+        return subTasks;
     }
     /**
      * Возвращает список подзадач, связанных с указанным эпиком.
@@ -105,27 +96,22 @@ public class TaskManager {
 
     /**
      * Возвращает задачу по её идентификатору.
-     *
      * @param id Идентификатор задачи
      * @return Задача или null, если задача не найдена
      */
     public Task getTask(int id) {
         return tasks.get(id);
     }
-
     /**
      * Удаляет задачу по её идентификатору.
-     *
      * @param id Идентификатор задачи для удаления
      */
     public void deleteTask(int id) {
         tasks.remove(id);
     }
-
     /**
      * Удаляет подзадачу по её идентификатору.
      * Если подзадача связана с эпиком, она также удаляется из списка подзадач эпика.
-     *
      * @param id Идентификатор подзадачи для удаления
      */
     public void deleteSubTask(int id) {
@@ -141,7 +127,6 @@ public class TaskManager {
             subTasks.remove(id);
         }
     }
-
     /**
      * Удаляет все задачи, подзадачи и эпики.
      */
@@ -150,11 +135,9 @@ public class TaskManager {
         subTasks.clear();
         epics.clear();
     }
-
     /**
      * Удаляет эпик по его идентификатору.
      * Если эпик содержит подзадачи, они также удаляются.
-     *
      * @param id Идентификатор эпика для удаления
      */
     public void deleteEpic(int id) {
@@ -175,60 +158,88 @@ public class TaskManager {
         }
     }
     /**
-     * Обновляет задачу по её идентификатору.
-     *
-     * @param id   Идентификатор задачи для обновления
-     * @param task Новая версия задачи
+     * Обновляет задачу.
+     * @param task Задача на обновление
+     * @param newName Новое наименование задачи
+     * @param newDescription Новое описание задачи
+     * @param newStatus Новый статус задачи
      */
-    public void updateTask(int id, Task task) {
-        if (tasks.containsKey(id)) {
-            tasks.put(id, task);
-        } else {
-            return;
-        }
+    public void updateTask(Task task, String newName, String newDescription, Status newStatus) {
+            task.setName(newName);
+            task.setDescription(newDescription);
+            task.setStatus(newStatus);
     }
     /**
-     * Обновляет подзадачу по её идентификатору.
-     * Если подзадача связана с эпиком, она также обновляется в списке подзадач эпика.
-     *
-     * @param id      Идентификатор подзадачи для обновления
-     * @param subTask Новая версия подзадачи
+     * Обновляет подзадачу.
+     * Если подзадача связана с эпиком, обновляем статус эпика.
+     * @param subTask Подзадача на обновление
+     * @param newName Новое наименование подзадачи
+     * @param newDescription Новое описание подзадачи
+     * @param newStatus Новый статус подзадачи
      */
-    public void updateSubTask(int id, SubTask subTask) {
-        SubTask subTaskToUpdate = subTasks.get(id); // Получаем SubTask по ID
-        if (subTaskToUpdate != null) {
-            subTasks.put(id, subTask);
-            // Находим Epic, к которому принадлежит SubTask
-            Epic parentEpic = subTaskToUpdate.getEpic();
-            if (parentEpic != null) {
-                ArrayList<SubTask> subtasksInEpic = parentEpic.getSubtasks();
-                // Ищем подзадачу в списке подзадач Epic и обновляем её
-                for (int i = 0; i < subtasksInEpic.size(); i++) {
-                    if (subtasksInEpic.get(i).getId() == id) {
-                        subtasksInEpic.set(i, subTask);
-                    }
-                }
-            }
-        }
+    public void updateSubTask(SubTask subTask, String newName, String newDescription, Status newStatus) {
+        subTask.setName(newName);
+        subTask.setDescription(newDescription);
+        subTask.setStatus(newStatus);
+        updateEpicStatus(subTask.getEpic());
     }
     /**
-     * Обновляет эпик по его идентификатору.
-     *
-     * @param id   Идентификатор эпика для обновления
-     * @param epic Новая версия эпика
+     * Обновляет эпик.
+     * @param epic Эпик на обновление
+     * @param newName Новое наименование эпика
+     * @param newDescription Новое описание эпика
      */
-    public void updateEpic(int id, Epic epic) {
-        if (epics.containsKey(id)) {
-            epics.put(id, epic);
-        } else {
-            return;
-        }
+    public void updateEpic(Epic epic, String newName, String newDescription) {
+        epic.setName(newName);
+        epic.setDescription(newDescription);
     }
     /**
      * Возвращает строковое представление менеджера задач.
-     *
      * @return Строка, содержащая информацию о всех задачах
      */
+    /**
+     * Метод для обновления статуса эпика на основе статусов его подзадач.
+     * Логика обновления:
+     * 1. Если список подзадач пуст или все подзадачи имеют статус NEW, то статус эпика — NEW.
+     * 2. Если все подзадачи имеют статус DONE, то статус эпика — DONE.
+     * 3. В остальных случаях статус эпика — IN_PROGRESS.
+     */
+    private void updateEpicStatus(Epic epic) {
+        ArrayList<SubTask> subtasks = epic.getSubtasks();
+        if (subtasks == null || subtasks.isEmpty()) {
+            epic.setStatus(Status.NEW); // Если подзадач нет, статус NEW
+            return;
+        }
+
+        boolean allDone = true; // Предполагаем, что все подзадачи завершены
+        boolean allNew = true;  // Предполагаем, что все подзадачи новые
+        // Проверяем статусы всех подзадач
+        for (SubTask subTask : subtasks) {
+            if (subTask.getStatus() != Status.DONE) {
+                allDone = false; // Если хотя бы одна подзадача не DONE, то Epic не DONE
+            }
+            if (subTask.getStatus() != Status.NEW) {
+                allNew = false; // Если хотя бы одна подзадача не NEW, то Epic не NEW
+            }
+        }
+        // Устанавливаем статус эпика на основе проверки
+        if (allDone) {
+            epic.setStatus(Status.DONE);
+        } else if (allNew) {
+            epic.setStatus(Status.NEW);
+        } else {
+            epic.setStatus(Status.IN_PROGRESS);
+        }
+    }
+    /**
+     * Метод для добавления подзадачи к эпику.
+     * После добавления подзадачи статус эпика обновляется.
+     * @param subTask Подзадача, которую нужно добавить к эпику
+     */
+    public void addSubtaskToEpic(Epic epic, SubTask subTask) {
+        epic.setSubtasks(subTask);
+        updateEpicStatus(epic); // Обновляем статус эпика
+    }
     @Override
     public String toString() {
         return "Менеджер задач {" +
