@@ -51,7 +51,10 @@ public class SubTask extends Task {
      * @param epic Эпик, к которому нужно привязать подзадачу
      */
     public void setEpic(Epic epic) {
-        this.epic = epic; //Устанавливаем ссылку на эпик
+        if (epic == null || epic.getId() == this.getId()) {  // Сравниваем только id
+            return;
+        }
+        this.epic = epic;
     }
     /**
      * Переопределение метода toString для удобного вывода информации о подзадаче.

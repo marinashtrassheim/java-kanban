@@ -29,6 +29,9 @@ import java.util.ArrayList;
      * Метод для установки списка подзадач, относящихся к этому эпику.
      */
     public void setSubtasks(SubTask subtask) {
+        if (subtask == null || subtask.getId() == this.getId()) {
+            return;
+        }
         subtasks.add(subtask);
     }
 

@@ -93,8 +93,9 @@ public class Task {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Task task = (Task) o;
+        if (o == null) return false;
+        if (!(o instanceof Task task)) return false;
+
         return id == task.id;
     }
     /**
