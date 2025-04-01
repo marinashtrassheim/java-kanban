@@ -1,19 +1,17 @@
 package management;
 import task.Epic;
-import task.Status;
 import task.SubTask;
 import task.Task;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
     private int id = 0; // Счетчик для генерации уникальных идентификаторов задач
-    private HashMap<Integer, Task> tasks = new HashMap<>(); // Коллекция для хранения задач
-    private HashMap<Integer, SubTask> subTasks = new HashMap<>(); // Коллекция для хранения подзадач
-    private HashMap<Integer, Epic> epics = new HashMap<>(); // Коллекция для хранения эпиков
-    private final HistoryManager historyManager = new InMemoryHistoryManager();
+    final HashMap<Integer, Task> tasks = new HashMap<>(); // Коллекция для хранения задач
+    final HashMap<Integer, SubTask> subTasks = new HashMap<>(); // Коллекция для хранения подзадач
+    final HashMap<Integer, Epic> epics = new HashMap<>(); // Коллекция для хранения эпиков
+    private final HistoryManager historyManager = Managers.getDefaultHistory();
     /**
      * Генерирует уникальный идентификатор для задачи.
      * @return Уникальный идентификатор (int)
@@ -190,9 +188,6 @@ public class InMemoryTaskManager implements TaskManager {
             } else {
                 epics.remove(id);
             }
-        }
-        else {
-            return;
         }
     }
     /**
