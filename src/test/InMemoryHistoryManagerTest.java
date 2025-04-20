@@ -1,6 +1,7 @@
 package test;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 import management.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ class InMemoryHistoryManagerTest {
         task = new Task("Test Task", "Test Description");
         taskManager.createTask(task);
     }
+
     /* Базовый тест на добавление */
     @Test
     void add_shouldAddTaskToHistory() {
@@ -42,11 +44,10 @@ class InMemoryHistoryManagerTest {
     @Test
     void shouldRemoveTaskFromHistory() {
         historyManager.addToHistory(task);
-        ((InMemoryHistoryManager)historyManager).remove(task.getId());
+        ((InMemoryHistoryManager) historyManager).remove(task.getId());
 
         assertTrue(historyManager.getHistory().isEmpty(), "История должна быть пустой после удаления");
     }
-
 
 
 }

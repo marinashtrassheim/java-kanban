@@ -1,7 +1,8 @@
 package management;
 
 public final class Managers {
-    private Managers() {} // Запрещаем создание экземпляров
+    private Managers() {
+    } // Запрещаем создание экземпляров
 
     /**
      * Возвращает реализацию TaskManager по умолчанию.

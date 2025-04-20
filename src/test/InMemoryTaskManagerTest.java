@@ -7,6 +7,7 @@ import management.TaskManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import task.*;
+
 import java.util.HashMap;
 
 class InMemoryTaskManagerTest {
@@ -32,35 +33,42 @@ class InMemoryTaskManagerTest {
         taskManager.createEpic(epic);
         taskManager.createSubTask(subTask);
     }
+
     /* Тесты для create-методов */
     @Test
     void createTask_shouldAddTaskToTasks() {
         assertFalse(taskManager.getAllTasks().isEmpty(), "Список задач не должен быть пустым после создания");
     }
+
     @Test
     void createEpic_shouldAddEpicToEpics() {
         assertFalse(taskManager.getAllEpics().isEmpty(), "Список задач не должен быть пустым после создания");
     }
+
     @Test
     void createSubTask_shouldAddSubTaskToSubTasks() {
         assertFalse(taskManager.getAllSubTasks().isEmpty(), "Список задач не должен быть пустым после создания");
     }
+
     /* Тесты для get-методов */
     @Test
     void getTask_shouldReturnCorrectTask() {
         Task testTask = taskManager.getTask(task.getId());
         assertEquals(task, testTask, "Должна вернуться тестовая задача");
     }
+
     @Test
     void getEpic_shouldReturnCorrectEpic() {
         Epic testEpic = taskManager.getEpic(epic.getId());
         assertEquals(epic, testEpic, "Должна вернуться тестовая задача");
     }
+
     @Test
     void getSubTask_shouldReturnCorrectSubTask() {
         SubTask testSubtask = taskManager.getSubTask(subTask.getId());
         assertEquals(subTask, testSubtask, "Должна вернуться тестовая задача");
     }
+
     /* Тесты на неизменность задачи при добавлении ее в менеджер */
     @Test
     void taskFields_shouldRemainUnchangedAfterAddingToManager() {
@@ -79,6 +87,7 @@ class InMemoryTaskManagerTest {
         assertEquals(originalDescription, originalTask.getDescription(), "Описание задачи не должно измениться");
         assertEquals(originalStatus, originalTask.getStatus(), "Статус задачи не должен измениться");
     }
+
     @Test
     void epicFields_shouldRemainUnchangedAfterAddingToManager() {
         // Создаем задачу и запоминаем её состояние
@@ -95,6 +104,7 @@ class InMemoryTaskManagerTest {
         assertEquals(originalDescription, originalEpic.getDescription(), "Описание задачи не должно измениться");
         assertEquals(originalStatus, originalEpic.getStatus(), "Статус задачи не должен измениться");
     }
+
     @Test
     void subTaskFields_shouldRemainUnchangedAfterAddingToManager() {
         // Создаем задачу и запоминаем её состояние
