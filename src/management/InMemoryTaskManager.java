@@ -10,9 +10,9 @@ import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
     private int id = 0; // Счетчик для генерации уникальных идентификаторов задач
-    final HashMap<Integer, Task> tasks = new HashMap<>(); // Коллекция для хранения задач
-    final HashMap<Integer, SubTask> subTasks = new HashMap<>(); // Коллекция для хранения подзадач
-    final HashMap<Integer, Epic> epics = new HashMap<>(); // Коллекция для хранения эпиков
+    private final HashMap<Integer, Task> tasks = new HashMap<>(); // Коллекция для хранения задач
+    private final HashMap<Integer, SubTask> subTasks = new HashMap<>(); // Коллекция для хранения подзадач
+    private final HashMap<Integer, Epic> epics = new HashMap<>(); // Коллекция для хранения эпиков
     private final HistoryManager historyManager = Managers.getDefaultHistory();
 
     /**
