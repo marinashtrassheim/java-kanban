@@ -1,7 +1,9 @@
 package test;
 
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import task.Epic;
 import task.SubTask;
@@ -32,6 +34,7 @@ class EpicTest {
     void epicsWithTheSameIdsShouldBeEquals() {
         assertEquals(epic1, epic2, "Эпики с одинаковым ID должны быть равны");
     }
+
     @Test
     public void testAddSubTask_EpicCannotBeItsOwnSubTask() {
         epic3.setSubtasks(subTask);

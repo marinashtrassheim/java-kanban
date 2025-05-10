@@ -1,10 +1,12 @@
 package task;
+
 import java.util.ArrayList;
+
 /**
  * Класс Epic представляет собой задачу типа "Эпик", которая может содержать подзадачи (SubTask).
  * Эпик имеет статус, который зависит от статусов его подзадач.
  */
- public class Epic extends Task{
+public class Epic extends Task {
     // Список подзадач, относящихся к этому эпику
     private ArrayList<SubTask> subtasks = new ArrayList<SubTask>();
 
@@ -18,13 +20,16 @@ import java.util.ArrayList;
         super(name, description);
         this.status = Status.NEW; // По умолчанию статус NEW
     }
+
     /**
      * Метод для получения списка подзадач, относящихся к этому эпику.
+     *
      * @return Список подзадач
      */
     public ArrayList<SubTask> getSubtasks() {
         return subtasks;
     }
+
     /**
      * Метод для установки списка подзадач, относящихся к этому эпику.
      */

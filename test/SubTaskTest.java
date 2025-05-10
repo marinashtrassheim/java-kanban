@@ -32,6 +32,7 @@ class SubTaskTest {
     void epicsWithTheSameIdsShouldBeEquals() {
         assertEquals(subTask1, subTask2, "Подзадачи с одинаковым ID должны быть равны");
     }
+
     @Test
     public void testSetEpic_SubTaskCannotBeItsOwnEpic() {
         // Создаем эпик

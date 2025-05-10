@@ -1,5 +1,6 @@
 import task.*;
 import management.*;
+
 import java.util.List;
 
 public class Main {
@@ -13,20 +14,20 @@ public class Main {
         taskManager.createTask(task2); //id = 2
         Task updatedTask = new Task("updatedTask", "description", Status.IN_PROGRESS);
 
-        Epic epic1 = new Epic("Epic1", "descr");
+        Epic epic1 = new Epic("Epic1", "desc");
         taskManager.createEpic(epic1); //id = 3
-        Epic epic2 = new Epic("Epic2", "descr");
+        Epic epic2 = new Epic("Epic2", "desc");
         taskManager.createEpic(epic2); // id =4
-        Epic updatedEpic = new Epic("UpdatedEpic", "Descrip");
+        Epic updatedEpic = new Epic("UpdatedEpic", "Describe");
 
-        SubTask subTask1 = new SubTask("SubTask1", "descr", epic1);
+        SubTask subTask1 = new SubTask("SubTask1", "desc", epic1);
         taskManager.createSubTask(subTask1); //id =5
-        SubTask subTask2 = new SubTask("SubTask2", "descr", epic1);
+        SubTask subTask2 = new SubTask("SubTask2", "desc", epic1);
         taskManager.createSubTask(subTask2); //id =6
-        SubTask subTask3 = new SubTask("SubTask3", "descr", epic2);
+        SubTask subTask3 = new SubTask("SubTask3", "desc", epic2);
         taskManager.createSubTask(subTask3); //id =7
-        SubTask updatedSubTask = new SubTask("UpdatedSubTask", "descr", Status.DONE);
-        SubTask subTask4 = new SubTask("SubTask3", "descr", Status.NEW);
+        SubTask updatedSubTask = new SubTask("UpdatedSubTask", "desc", Status.DONE);
+        SubTask subTask4 = new SubTask("SubTask3", "desc", Status.NEW);
         taskManager.createSubTask(subTask4);
 
         taskManager.updateTask(task1, updatedTask);
@@ -52,7 +53,6 @@ public class Main {
             taskManager.getTask(1);
         }
 
-        System.out.println(taskManager.getSubTask(7)); // Добавим еще одну задачу в историю, чтобы проверить лимит 10 задач
 
         System.out.println("История просмотра");
         List<Task> history = taskManager.getHistory();

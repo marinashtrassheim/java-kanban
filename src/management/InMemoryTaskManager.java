@@ -1,27 +1,33 @@
 package management;
+
 import task.Epic;
 import task.SubTask;
 import task.Task;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
     private int id = 0; // Счетчик для генерации уникальных идентификаторов задач
-    final HashMap<Integer, Task> tasks = new HashMap<>(); // Коллекция для хранения задач
-    final HashMap<Integer, SubTask> subTasks = new HashMap<>(); // Коллекция для хранения подзадач
-    final HashMap<Integer, Epic> epics = new HashMap<>(); // Коллекция для хранения эпиков
+    private final HashMap<Integer, Task> tasks = new HashMap<>(); // Коллекция для хранения задач
+    private final HashMap<Integer, SubTask> subTasks = new HashMap<>(); // Коллекция для хранения подзадач
+    private final HashMap<Integer, Epic> epics = new HashMap<>(); // Коллекция для хранения эпиков
     private final HistoryManager historyManager = Managers.getDefaultHistory();
+
     /**
      * Генерирует уникальный идентификатор для задачи.
+     *
      * @return Уникальный идентификатор (int)
      */
     private int generateId() {
         id++;
         return id;
     }
+
     /**
      * Добавляет задачу в коллекцию задач.
+     *
      * @param task Задача для добавления
      */
     @Override
@@ -30,8 +36,10 @@ public class InMemoryTaskManager implements TaskManager {
         task.setId(taskId); // Устанавливаем ID задачи
         tasks.put(taskId, task);
     }
+
     /**
      * Добавляет подзадачу в коллекцию подзадач.
+     *
      * @param subTask Подзадача для добавления
      */
     @Override
@@ -44,8 +52,10 @@ public class InMemoryTaskManager implements TaskManager {
             addSubtaskToEpic(epic, subTask);
         }
     }
+
     /**
      * Добавляет эпик в коллекцию эпиков.
+     *
      * @param epic Эпик для добавления
      */
     @Override
@@ -54,14 +64,17 @@ public class InMemoryTaskManager implements TaskManager {
         epic.setId(epicId);
         epics.put(epicId, epic);
     }
+
     /**
      * Возвращает строковое представление всех задач.
+     *
      * @return Строка, содержащая информацию о всех задачах
      */
     @Override
     public HashMap<Integer, Task> getAllTasks() {
         return tasks;
     }
+
     /**
      * Возвращает строковое представление всех эпиков.
      *
@@ -71,6 +84,7 @@ public class InMemoryTaskManager implements TaskManager {
     public HashMap<Integer, Epic> getAllEpics() {
         return epics;
     }
+
     /**
      * Возвращает строковое представление всех подзадач.
      *
@@ -80,6 +94,7 @@ public class InMemoryTaskManager implements TaskManager {
     public HashMap<Integer, SubTask> getAllSubTasks() {
         return subTasks;
     }
+
     /**
      * Возвращает список подзадач, связанных с указанным эпиком.
      *
@@ -95,8 +110,10 @@ public class InMemoryTaskManager implements TaskManager {
             return new ArrayList<>(); // Если Epic не найден, возвращаем пустой список
         }
     }
+
     /**
      * Возвращает задачу по её идентификатору.
+     *
      * @param id Идентификатор задачи
      * @return Задача или null, если задача не найдена
      */
@@ -108,8 +125,10 @@ public class InMemoryTaskManager implements TaskManager {
         }
         return task;
     }
+
     /**
      * Возвращает эпик по её идентификатору.
+     *
      * @param id Идентификатор эпика
      * @return эпик или null, если эпик не найден
      */
@@ -121,8 +140,10 @@ public class InMemoryTaskManager implements TaskManager {
         }
         return epic;
     }
+
     /**
      * Возвращает подзадачу по её идентификатору.
+     *
      * @param id Идентификатор подзадачи
      * @return Подзадача или null, если подзадача не найдена
      */
@@ -134,17 +155,21 @@ public class InMemoryTaskManager implements TaskManager {
         }
         return subTask;
     }
+
     /**
      * Удаляет задачу по её идентификатору.
+     *
      * @param id Идентификатор задачи для удаления
      */
     @Override
     public void deleteTask(int id) {
         tasks.remove(id);
     }
+
     /**
      * Удаляет подзадачу по её идентификатору.
      * Если подзадача связана с эпиком, она также удаляется из списка подзадач эпика.
+     *
      * @param id Идентификатор подзадачи для удаления
      */
     @Override
@@ -161,6 +186,7 @@ public class InMemoryTaskManager implements TaskManager {
             subTasks.remove(id);
         }
     }
+
     /**
      * Удаляет все задачи, подзадачи и эпики.
      */
@@ -170,9 +196,11 @@ public class InMemoryTaskManager implements TaskManager {
         subTasks.clear();
         epics.clear();
     }
+
     /**
      * Удаляет эпик по его идентификатору.
      * Если эпик содержит подзадачи, они также удаляются.
+     *
      * @param id Идентификатор эпика для удаления
      */
     @Override
@@ -190,8 +218,10 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
     }
+
     /**
      * Обновляет задачу.
+     *
      * @param currentTask Задача на обновление
      * @param updatedTask Задача на которую обновляем
      */
@@ -201,9 +231,11 @@ public class InMemoryTaskManager implements TaskManager {
         currentTask.setDescription(updatedTask.getDescription());
         currentTask.setStatus(updatedTask.getStatus());
     }
+
     /**
      * Обновляет подзадачу.
      * Если подзадача связана с эпиком, обновляем статус эпика.
+     *
      * @param currentSubTask Подзадача на обновление
      * @param updatedSubTask Подзадача на которую меняем
      */
@@ -214,8 +246,10 @@ public class InMemoryTaskManager implements TaskManager {
         currentSubTask.setStatus(updatedSubTask.getStatus());
         updateEpicStatus(currentSubTask.getEpic());
     }
+
     /**
      * Обновляет эпик.
+     *
      * @param currentEpic Эпик на обновление
      * @param updatedEpic Новый эпик
      */
@@ -228,6 +262,7 @@ public class InMemoryTaskManager implements TaskManager {
     /**
      * Метод для добавления подзадачи к эпику.
      * После добавления подзадачи статус эпика обновляется.
+     *
      * @param subTask Подзадача, которую нужно добавить к эпику
      */
     @Override
@@ -235,12 +270,14 @@ public class InMemoryTaskManager implements TaskManager {
         epic.setSubtasks(subTask);
         updateEpicStatus(epic); // Обновляем статус эпика
     }
+
     @Override
     public String toString() {
         return "Менеджер задач {" +
                 "Задачи=" + tasks +
                 '}';
     }
+
     @Override
     public List<Task> getHistory() {
         return historyManager.getHistory();
