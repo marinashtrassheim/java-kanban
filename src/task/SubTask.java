@@ -23,6 +23,7 @@ public class SubTask extends Task {
 
     /**
      * Конструктор для создания подзадачи с привязкой к эпику.
+     *
      * @param name        Название подзадачи
      * @param description Описание подзадачи
      * @param status      Статус подзадачи

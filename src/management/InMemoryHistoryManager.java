@@ -55,6 +55,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         return tasks;
     }
 
+
     private void removeNode(Node node) {
         if (node == null) return;
 
