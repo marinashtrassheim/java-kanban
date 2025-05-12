@@ -135,7 +135,6 @@ public class InMemoryTaskManager implements TaskManager {
      * Возвращает задачу по её идентификатору.
      *
      * @param id Идентификатор задачи
-     * @return Задача или null, если задача не найдена
      */
     @Override
     public Task getTask(int id) {
@@ -150,32 +149,36 @@ public class InMemoryTaskManager implements TaskManager {
      * Возвращает эпик по её идентификатору.
      *
      * @param id Идентификатор эпика
-     * @return эпик или null, если эпик не найден
      */
     @Override
     public Epic getEpic(int id) {
         Task task = allTasks.get(id);
-        if (task instanceof Epic epic) {
-            historyManager.addToHistory(epic);
-            return epic;
+        if (task == null) {
+            throw new IllegalArgumentException("Задача с ID " + id + " не найдена.");
         }
-        return null;
+        if (!(task instanceof Epic epic)) {
+            throw new IllegalArgumentException("Задача с ID " + id + " не является эпиком. Переданный тип: " + task.getClass().getSimpleName());
+        }
+        historyManager.addToHistory(epic);
+        return epic;
     }
 
     /**
      * Возвращает подзадачу по её идентификатору.
      *
      * @param id Идентификатор подзадачи
-     * @return Подзадача или null, если подзадача не найдена
      */
     @Override
     public SubTask getSubTask(int id) {
         Task task = allTasks.get(id);
-        if (task instanceof SubTask subTask) {
-            historyManager.addToHistory(subTask);
-            return subTask;
+        if (task == null) {
+            throw new IllegalArgumentException("Задача с ID " + id + " не найдена.");
         }
-        return null;
+        if (!(task instanceof SubTask subTask)) {
+            throw new IllegalArgumentException("Задача с ID " + id + " не является эпиком. Переданный тип: " + task.getClass().getSimpleName());
+        }
+        historyManager.addToHistory(subTask);
+        return subTask;
     }
 
     /**

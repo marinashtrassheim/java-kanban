@@ -19,7 +19,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         this.filePath = Paths.get(filePath).toAbsolutePath();
     }
 
-    public void save() {
+    private void save() {
         try {
             Path parent = filePath.getParent();
             if (parent != null) {
@@ -32,7 +32,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         try (BufferedWriter fileWriter = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
             fileWriter.write("id,type,name,status,description,epic" + "\n");
             for (Task task : getAllTasksTypes().values()) {
-                fileWriter.write(taskToCSVString(task) + "\n");
+                fileWriter.write(CSVFormat.taskToCSVString(task) + "\n");
             }
         } catch (IOException e) {
             throw new ManagerSaveException("Failed to save tasks to file: " + filePath, e);
@@ -50,7 +50,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 if (line.isEmpty()) {
                     continue;
                 }
-                Task task = loadManager.taskFromString(line);
+                Task task = CSVFormat.taskFromString(loadManager, line);
                 loadManager.getAllTasksTypes().put(task.getId(), task);
             }
 
@@ -64,56 +64,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка загрузки из файла", e);
         }
-    }
-
-    public String taskToCSVString(Task task) {
-        TaskType taskType;
-        String epicId = "";
-
-        if (task instanceof Epic) {
-            taskType = TaskType.EPIC;
-        } else if (task instanceof SubTask) {
-            taskType = TaskType.SUBTASK;
-            epicId = String.valueOf(((SubTask) task).getEpic().getId());
-        } else {
-            taskType = TaskType.TASK;
-        }
-
-        return String.join(",",
-                String.valueOf(task.getId()),
-                String.valueOf(taskType),
-                task.getName(),
-                task.getStatus().name(),
-                task.getDescription(),
-                epicId);
-    }
-
-    public Task taskFromString(String value) {
-        String[] parts = value.split(",", -1);
-        int id = Integer.parseInt(parts[0].trim());
-        TaskType taskType = TaskType.valueOf(parts[1].trim());
-        String name = parts[2].trim();
-        Status status = Status.valueOf(parts[3].trim());
-        String description = parts[4].trim();
-
-        if (taskType == TaskType.TASK) {
-            Task task = new Task(name, description, status);
-            task.setId(id);
-            return task;
-        } else if (taskType == TaskType.EPIC) {
-            Epic epic = new Epic(name, description);
-            epic.setId(id);
-            epic.setStatus(status);
-            return epic;
-        } else {
-            int epicId = Integer.parseInt(parts[5].trim());
-            Epic epic = getAllEpics().get(epicId);
-            SubTask subTask = new SubTask(name, description, epic);
-            subTask.setId(id);
-            subTask.setStatus(status);
-            return subTask;
-        }
-
     }
 
     @Override
