@@ -1,6 +1,7 @@
 package management;
 
 import exceptions.ManagerSaveException;
+import exceptions.TaskOverlapException;
 import task.*;
 
 import java.io.BufferedWriter;
@@ -30,8 +31,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
 
         try (BufferedWriter fileWriter = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
-            fileWriter.write("id,type,name,status,description,epic" + "\n");
-            for (Task task : getAllTasksTypes().values()) {
+            fileWriter.write("id,type,name,status,description,startTime,duration,epic" + "\n");
+            for (Task task : getAllTasksTypes()) {
                 fileWriter.write(CSVFormat.taskToCSVString(task) + "\n");
             }
         } catch (IOException e) {
@@ -40,7 +41,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     }
 
-    public static FileBackedTaskManager loadFromFile(File file) {
+    public FileBackedTaskManager loadFromFile(File file) {
         FileBackedTaskManager loadManager = new FileBackedTaskManager(file.getAbsolutePath());
 
         try {
@@ -51,14 +52,28 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     continue;
                 }
                 Task task = CSVFormat.taskFromString(loadManager, line);
-                loadManager.getAllTasksTypes().put(task.getId(), task);
+                if (task instanceof Epic) {
+                    loadManager.createEpic((Epic) task);
+                } else if (task instanceof SubTask) {
+                    loadManager.createSubTask((SubTask) task);
+                } else {
+                    loadManager.createTask(task);
+                }
             }
 
             for (SubTask subTask : loadManager.getAllSubTasks().values()) {
-                Epic epic = loadManager.getAllEpics().get(subTask.getEpic().getId());
+                Epic epic = subTask.getEpic();
                 if (epic != null) {
-                    epic.setSubtasks(subTask);
+                    Epic loadedEpic = loadManager.getAllEpics().get(epic.getId());
+                    if (loadedEpic != null) {
+                        loadManager.addSubtaskToEpic(loadedEpic, subTask);
+                    }
                 }
+            }
+
+            for (Epic epic : loadManager.getAllEpics().values()) {
+                loadManager.updateEpicStatus(epic);
+                loadManager.updateEpicTimes(epic);
             }
             return loadManager;
         } catch (IOException e) {
@@ -68,20 +83,29 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public void createTask(Task task) {
-        super.createTask(task);
-        save();
+        try {
+            super.createTask(task);
+            save();
+        } catch (TaskOverlapException ignored) {
+        }
     }
 
     @Override
     public void createSubTask(SubTask subTask) {
-        super.createSubTask(subTask);
-        save();
+        try {
+            super.createSubTask(subTask);
+            save();
+        } catch (TaskOverlapException ignored) {
+        }
     }
 
     @Override
     public void createEpic(Epic epic) {
-        super.createEpic(epic);
-        save();
+        try {
+            super.createEpic(epic);
+            save();
+        } catch (TaskOverlapException ignored) {
+        }
     }
 
     @Override
@@ -109,15 +133,32 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void updateTask(Task currentTask, Task updatedTask) {
-        super.updateTask(currentTask, updatedTask);
-        save();
+    public void updateTask(Task taskToUpdate,
+                           String newName,          // null = не обновлять
+                           String newDescription,   // null = не обновлять
+                           Status newStatus,        // null = не обновлять
+                           String newStartTime, // null = не обновлять
+                           Long newDuration) {
+        try {
+            super.updateTask(taskToUpdate, newName, newDescription, newStatus, newStartTime, newDuration);
+            save();
+        } catch (TaskOverlapException ignored) {
+        }
     }
 
     @Override
-    public void updateSubTask(SubTask currentSubTask, SubTask updatedSubTask) {
-        super.updateSubTask(currentSubTask, updatedSubTask);
-        save();
+    public void updateSubTask(SubTask subTaskToUpdate,
+                              String newName,          // null = не обновлять
+                              String newDescription,   // null = не обновлять
+                              Status newStatus,        // null = не обновлять
+                              String newStartTime, // null = не обновлять
+                              Long newDuration,
+                              Epic newEpic) {
+        try {
+            super.updateSubTask(subTaskToUpdate, newName, newDescription, newStatus, newStartTime, newDuration, newEpic);
+            save();
+        } catch (TaskOverlapException ignored) {
+        }
     }
 
     @Override
@@ -131,6 +172,5 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         super.addSubtaskToEpic(epic, subTask);
         save();
     }
-
 
 }

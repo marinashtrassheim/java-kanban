@@ -1,20 +1,20 @@
 package management;
 
+import exceptions.TaskOverlapException;
 import task.Epic;
 import task.Status;
 import task.SubTask;
 import task.Task;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.time.Duration;
+import java.util.*;
 
 public interface TaskManager {
-    void createTask(Task task);
+    void createTask(Task task) throws TaskOverlapException;
 
-    void createSubTask(SubTask subTask);
+    void createSubTask(SubTask subTask) throws TaskOverlapException;
 
-    void createEpic(Epic epic);
+    void createEpic(Epic epic) throws TaskOverlapException;
 
     HashMap<Integer, Task> getAllTasks();
 
@@ -22,13 +22,11 @@ public interface TaskManager {
 
     HashMap<Integer, SubTask> getAllSubTasks();
 
-    ArrayList<SubTask> getSubTasksByEpicId(int epicId);
-
     Task getTask(int id);
 
-    Epic getEpic(int id);
-
     SubTask getSubTask(int id);
+
+    Epic getEpic(int id);
 
     void deleteTask(int id);
 
@@ -38,9 +36,20 @@ public interface TaskManager {
 
     void deleteEpic(int id);
 
-    void updateTask(Task currentTask, Task updatedTask);
+    void updateTask(Task taskToUpdate,
+                    String newName,          // null = не обновлять
+                    String newDescription,   // null = не обновлять
+                    Status newStatus,        // null = не обновлять
+                    String newStartTime, // null = не обновлять
+                    Long newDuration) throws TaskOverlapException;
 
-    void updateSubTask(SubTask currentSubTask, SubTask updatedSubTask);
+    void updateSubTask(SubTask subTaskToUpdate,
+                       String newName,          // null = не обновлять
+                       String newDescription,   // null = не обновлять
+                       Status newStatus,        // null = не обновлять
+                       String newStartTime, // null = не обновлять
+                       Long newDuration,
+                       Epic newEpic) throws TaskOverlapException;
 
     void updateEpic(Epic currentEpic, Epic updatedEpic);
 
@@ -52,8 +61,8 @@ public interface TaskManager {
      * 3. В остальных случаях статус эпика — IN_PROGRESS.
      */
     default void updateEpicStatus(Epic epic) {
-        ArrayList<SubTask> subtasks = epic.getSubtasks();
-        if (subtasks == null || subtasks.isEmpty()) {
+        TreeSet<SubTask> prioritizedSubTasks = epic.getPrioritizedSubTasks();
+        if (prioritizedSubTasks == null || prioritizedSubTasks.isEmpty()) {
             epic.setStatus(Status.NEW); // Если подзадач нет, статус NEW
             return;
         }
@@ -61,7 +70,7 @@ public interface TaskManager {
         boolean allDone = true; // Предполагаем, что все подзадачи завершены
         boolean allNew = true;  // Предполагаем, что все подзадачи новые
         // Проверяем статусы всех подзадач
-        for (SubTask subTask : subtasks) {
+        for (SubTask subTask : prioritizedSubTasks) {
             if (subTask.getStatus() != Status.DONE) {
                 allDone = false; // Если хотя бы одна подзадача не DONE, то Epic не DONE
             }
@@ -77,6 +86,28 @@ public interface TaskManager {
         } else {
             epic.setStatus(Status.IN_PROGRESS);
         }
+    }
+
+    public default void updateEpicTimes(Epic epic) {
+        TreeSet<SubTask> prioritizedTasks = epic.getPrioritizedSubTasks();
+        if (prioritizedTasks == null || prioritizedTasks.isEmpty()) {
+            epic.setEpicStartTime(null);
+            epic.setEpicEndTime(null);
+            epic.setEpicDuration(null);
+            return;
+        }
+
+        SubTask first = prioritizedTasks.first();
+        epic.setEpicStartTime(first.getStartTime());
+
+        SubTask last = prioritizedTasks.last();
+        epic.setEpicEndTime(last.getEndTime());
+
+        Duration duration = prioritizedTasks.stream()
+                .map(SubTask::getDuration)
+                .filter(Objects::nonNull)
+                .reduce(Duration.ZERO, Duration::plus);
+        epic.setEpicDuration(duration);
     }
 
     void addSubtaskToEpic(Epic epic, SubTask subTask);

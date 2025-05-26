@@ -1,6 +1,10 @@
 package task;
 
-import java.util.ArrayList;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.Optional;
+import java.util.TreeSet;
 
 /**
  * Класс Epic представляет собой задачу типа "Эпик", которая может содержать подзадачи (SubTask).
@@ -8,7 +12,13 @@ import java.util.ArrayList;
  */
 public class Epic extends Task {
     // Список подзадач, относящихся к этому эпику
-    private ArrayList<SubTask> subtasks = new ArrayList<SubTask>();
+    private final TreeSet<SubTask> prioritizedSubTasks = new TreeSet<>(
+            Comparator.comparing(SubTask::getStartTime, Comparator.nullsLast(Comparator.naturalOrder()))
+                    .thenComparing(SubTask::getId)
+    );
+    private LocalDateTime epicStartTime; // Время старта эпика (=времени старта 1 задачи в subtasks) (2023-11-15T14:30)
+    private Duration epicDuration; // Длительность работы над эпиком (сумма duration всех subtasks)
+    private LocalDateTime epicEndTime; // Время окончания эпика (=времени окончания 1 задачи в subtasks) (2023-11-15T14:30)
 
     /**
      * Конструктор для создания эпика, когда список подзадач неизвестен.
@@ -21,24 +31,49 @@ public class Epic extends Task {
         this.status = Status.NEW; // По умолчанию статус NEW
     }
 
-    /**
-     * Метод для получения списка подзадач, относящихся к этому эпику.
-     *
-     * @return Список подзадач
-     */
-    public ArrayList<SubTask> getSubtasks() {
-        return subtasks;
+    public void setPrioritizedSubTasks(SubTask subTask) {
+        prioritizedSubTasks.add(subTask);
     }
 
-    /**
-     * Метод для установки списка подзадач, относящихся к этому эпику.
-     */
-    public void setSubtasks(SubTask subtask) {
-        if (subtask == null || subtask.getId() == this.getId()) {
-            return;
-        }
-        subtasks.add(subtask);
+    public void deletePrioritizedSubTasks(SubTask subTask) {
+        prioritizedSubTasks.remove(subTask);
     }
+
+
+    public TreeSet<SubTask> getPrioritizedSubTasks() {
+        return prioritizedSubTasks;
+    }
+
+    public void setEpicStartTime(LocalDateTime epicStartTime) {
+        this.epicStartTime = epicStartTime;
+    }
+
+    public LocalDateTime getEpicStartTime() {
+        return epicStartTime;
+    }
+
+    public void setEpicEndTime(LocalDateTime epicEndTime) {
+        this.epicEndTime = epicEndTime;
+    }
+
+    public LocalDateTime getEpicEndTime() {
+        return this.epicEndTime;
+    }
+
+    public void setEpicDuration(Duration duration) {
+        this.epicDuration = duration;
+    }
+
+    public Duration getEpicDuration() {
+        return epicDuration;
+    }
+
+    public Optional<SubTask> getSubtaskById(int id) {
+        return prioritizedSubTasks.stream()
+                .filter(subTask -> subTask.getId() == id)
+                .findFirst();
+    }
+
 
     /**
      * Переопределение метода toString для удобного вывода информации об эпике.
@@ -48,12 +83,22 @@ public class Epic extends Task {
      */
     @Override
     public String toString() {
-        return "Эпик {" +
-                "ID=" + id +
-                ", Название='" + name + '\'' +
-                ", Описание='" + description + '\'' +
-                ", Статус=" + status +
-                ", Подзадачи=" + subtasks +
-                '}';
+        return String.format("""
+                        Эпик {
+                            ID = %d
+                            Название = '%s'
+                            Описание = '%s'
+                            Статус = %s
+                            Подзадачи = %s
+                            Время начала = %s
+                            Длительность = %s минут
+                        }""",
+                id,
+                name,
+                description,
+                status,
+                prioritizedSubTasks,
+                epicStartTime != null ? epicStartTime.format(formatter) : "не назначено",
+                epicDuration != null ? epicDuration.toMinutes() : "не назначено");
     }
 }

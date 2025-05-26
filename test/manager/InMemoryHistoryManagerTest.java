@@ -1,4 +1,4 @@
-package test;
+package manager;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -11,15 +11,18 @@ import java.util.List;
 
 class InMemoryHistoryManagerTest {
     private HistoryManager historyManager;
-    private TaskManager taskManager;
     private Task task;
 
     @BeforeEach
     void setUp() {
         historyManager = new InMemoryHistoryManager();
-        taskManager = Managers.getDefault();
-        task = new Task("Test Task", "Test Description");
-        taskManager.createTask(task);
+        TaskManager taskManager = Managers.getDefault();
+        try {
+            task = new Task("Test Task", "Test Description");
+            taskManager.createTask(task);
+        } catch (exceptions.TaskOverlapException e) {
+            System.out.println(e.getMessage()); // Просто выводим сообщение об ошибке
+        }
     }
 
     /* Базовый тест на добавление */
