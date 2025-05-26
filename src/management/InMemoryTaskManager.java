@@ -217,7 +217,7 @@ public class InMemoryTaskManager implements TaskManager {
                            String newDescription,   // null = не обновлять
                            Status newStatus,        // null = не обновлять
                            String newStartTime, // null = не обновлять
-                           Long newDuration) throws TaskOverlapException {// null = не обновлять
+                           Long newDuration) throws TaskOverlapException {
         // Проверка согласованности временных параметров
         if ((newStartTime == null && newDuration != null) ||
                 (newStartTime != null && newDuration == null)) {
