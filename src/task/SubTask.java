@@ -66,6 +66,7 @@ public class SubTask extends Task {
         copy.setDuration(Duration.ofMinutes(duration));
         return copy;
     }
+
     @Override
     public String toString() {
         return String.format("""
