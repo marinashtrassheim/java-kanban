@@ -61,6 +61,8 @@ public class Task {
         this.name = name;
         this.description = description;
         this.status = Status.NEW;
+        startTime = LocalDateTime.now();
+        duration = Duration.ofMinutes(5);
     }
 
     /**
@@ -74,6 +76,8 @@ public class Task {
         this.name = name;
         this.description = description;
         this.status = status;
+        startTime = LocalDateTime.now();
+        duration = Duration.ofMinutes(5);
     }
 
     /**

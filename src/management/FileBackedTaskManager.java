@@ -1,7 +1,6 @@
 package management;
 
 import exceptions.ManagerSaveException;
-import exceptions.TaskOverlapException;
 import task.*;
 
 import java.io.BufferedWriter;
@@ -72,8 +71,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             }
 
             for (Epic epic : loadManager.getAllEpics().values()) {
-                loadManager.updateEpicStatus(epic);
-                loadManager.updateEpicTimes(epic);
+                epic.updateEpicTimes(epic);
+                epic.updateEpicStatus(epic);
             }
             return loadManager;
         } catch (IOException e) {
@@ -83,29 +82,20 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public void createTask(Task task) {
-        try {
-            super.createTask(task);
-            save();
-        } catch (TaskOverlapException ignored) {
-        }
+        super.createTask(task);
+        save();
     }
 
     @Override
     public void createSubTask(SubTask subTask) {
-        try {
-            super.createSubTask(subTask);
-            save();
-        } catch (TaskOverlapException ignored) {
-        }
+        super.createSubTask(subTask);
+        save();
     }
 
     @Override
     public void createEpic(Epic epic) {
-        try {
-            super.createEpic(epic);
-            save();
-        } catch (TaskOverlapException ignored) {
-        }
+        super.createEpic(epic);
+        save();
     }
 
     @Override
@@ -139,11 +129,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                            Status newStatus,        // null = не обновлять
                            String newStartTime, // null = не обновлять
                            Long newDuration) {
-        try {
-            super.updateTask(taskToUpdate, newName, newDescription, newStatus, newStartTime, newDuration);
-            save();
-        } catch (TaskOverlapException ignored) {
-        }
+        super.updateTask(taskToUpdate, newName, newDescription, newStatus, newStartTime, newDuration);
+        save();
     }
 
     @Override
@@ -154,11 +141,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                               String newStartTime, // null = не обновлять
                               Long newDuration,
                               Epic newEpic) {
-        try {
-            super.updateSubTask(subTaskToUpdate, newName, newDescription, newStatus, newStartTime, newDuration, newEpic);
-            save();
-        } catch (TaskOverlapException ignored) {
-        }
+        super.updateSubTask(subTaskToUpdate, newName, newDescription, newStatus, newStartTime, newDuration, newEpic);
+        save();
     }
 
     @Override

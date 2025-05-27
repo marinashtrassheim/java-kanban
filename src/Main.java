@@ -16,26 +16,26 @@ public class Main {
             System.out.println(e.getMessage());
         }
 
-        SubTask subTask00 = new SubTask("Task00", "descrip", "15.03.2025 14:30", 120, epic);
-        try {
-            manager.createSubTask(subTask00);
-        } catch (TaskOverlapException e) {
-            System.out.println(e.getMessage());
-        }
-
-        SubTask subTask01 = new SubTask("Task01", "descrip", "15.03.2025 18:30", 100, epic);
-        try {
-            manager.createSubTask(subTask01);
-        } catch (TaskOverlapException e) {
-            System.out.println(e.getMessage());
-        }
-
-        try {
-            manager.updateSubTask(subTask01, null, null, null, "15.03.2025 14:30", 120L, epic);
-        } catch (TaskOverlapException e) {
-            System.out.println(e.getMessage());
-            System.out.println("не обновилось");
-        }
+//        SubTask subTask00 = new SubTask("Task00", "descrip", "15.03.2025 14:30", 120, epic);
+//        try {
+//            manager.createSubTask(subTask00);
+//        } catch (TaskOverlapException e) {
+//            System.out.println(e.getMessage());
+//        }
+//
+//        SubTask subTask01 = new SubTask("Task01", "descrip", "15.03.2025 18:30", 100, epic);
+//        try {
+//            manager.createSubTask(subTask01);
+//        } catch (TaskOverlapException e) {
+//            System.out.println(e.getMessage());
+//        }
+//
+//        try {
+//            manager.updateSubTask(subTask01, null, null, null, "15.03.2025 14:30", 120L, epic);
+//        } catch (TaskOverlapException e) {
+//            System.out.println(e.getMessage());
+//            System.out.println("не обновилось");
+//        }
 
         System.out.println(manager.getAllTasksTypes());
 

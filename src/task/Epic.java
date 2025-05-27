@@ -3,6 +3,7 @@ package task;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeSet;
 
@@ -16,8 +17,6 @@ public class Epic extends Task {
             Comparator.comparing(SubTask::getStartTime, Comparator.nullsLast(Comparator.naturalOrder()))
                     .thenComparing(SubTask::getId)
     );
-    private LocalDateTime epicStartTime; // Время старта эпика (=времени старта 1 задачи в subtasks) (2023-11-15T14:30)
-    private Duration epicDuration; // Длительность работы над эпиком (сумма duration всех subtasks)
     private LocalDateTime epicEndTime; // Время окончания эпика (=времени окончания 1 задачи в subtasks) (2023-11-15T14:30)
 
     /**
@@ -28,7 +27,61 @@ public class Epic extends Task {
      */
     public Epic(String name, String description) {
         super(name, description);
-        this.status = Status.NEW; // По умолчанию статус NEW
+        epicEndTime = LocalDateTime.now();
+    }
+
+    /**
+     * Метод для обновления статуса эпика на основе статусов его подзадач.
+     * Логика обновления:
+     * 1. Если список подзадач пуст или все подзадачи имеют статус NEW, то статус эпика — NEW.
+     * 2. Если все подзадачи имеют статус DONE, то статус эпика — DONE.
+     * 3. В остальных случаях статус эпика — IN_PROGRESS.
+     */
+    public void updateEpicStatus(Epic epic) {
+        if (prioritizedSubTasks.isEmpty()) {
+            epic.setStatus(Status.NEW); // Если подзадач нет, статус NEW
+            return;
+        }
+
+        boolean allDone = true; // Предполагаем, что все подзадачи завершены
+        boolean allNew = true;  // Предполагаем, что все подзадачи новые
+        // Проверяем статусы всех подзадач
+        for (SubTask subTask : prioritizedSubTasks) {
+            if (subTask.getStatus() != Status.DONE) {
+                allDone = false; // Если хотя бы одна подзадача не DONE, то Epic не DONE
+            }
+            if (subTask.getStatus() != Status.NEW) {
+                allNew = false; // Если хотя бы одна подзадача не NEW, то Epic не NEW
+            }
+        }
+        // Устанавливаем статус эпика на основе проверки
+        if (allDone) {
+            epic.setStatus(Status.DONE);
+        } else if (allNew) {
+            epic.setStatus(Status.NEW);
+        } else {
+            epic.setStatus(Status.IN_PROGRESS);
+        }
+    }
+
+    public void updateEpicTimes(Epic epic) {
+        if (prioritizedSubTasks.isEmpty()) {
+            epic.setEpicStartTime(this.startTime);
+            epic.setEpicEndTime(this.epicEndTime);
+            return;
+        }
+
+        SubTask first = prioritizedSubTasks.first();
+        epic.setEpicStartTime(first.getStartTime());
+
+        SubTask last = prioritizedSubTasks.last();
+        epic.setEpicEndTime(last.getEndTime());
+
+        Duration duration = prioritizedSubTasks.stream()
+                .map(SubTask::getDuration)
+                .filter(Objects::nonNull)
+                .reduce(Duration.ZERO, Duration::plus);
+        epic.setEpicDuration(duration);
     }
 
     public void setPrioritizedSubTasks(SubTask subTask) {
@@ -39,17 +92,16 @@ public class Epic extends Task {
         prioritizedSubTasks.remove(subTask);
     }
 
-
     public TreeSet<SubTask> getPrioritizedSubTasks() {
         return prioritizedSubTasks;
     }
 
     public void setEpicStartTime(LocalDateTime epicStartTime) {
-        this.epicStartTime = epicStartTime;
+        this.startTime= epicStartTime;
     }
 
     public LocalDateTime getEpicStartTime() {
-        return epicStartTime;
+        return startTime;
     }
 
     public void setEpicEndTime(LocalDateTime epicEndTime) {
@@ -61,11 +113,11 @@ public class Epic extends Task {
     }
 
     public void setEpicDuration(Duration duration) {
-        this.epicDuration = duration;
+        this.duration= duration;
     }
 
     public Duration getEpicDuration() {
-        return epicDuration;
+        return duration;
     }
 
     public Optional<SubTask> getSubtaskById(int id) {
@@ -73,7 +125,6 @@ public class Epic extends Task {
                 .filter(subTask -> subTask.getId() == id)
                 .findFirst();
     }
-
 
     /**
      * Переопределение метода toString для удобного вывода информации об эпике.
@@ -98,7 +149,7 @@ public class Epic extends Task {
                 description,
                 status,
                 prioritizedSubTasks,
-                epicStartTime != null ? epicStartTime.format(formatter) : "не назначено",
-                epicDuration != null ? epicDuration.toMinutes() : "не назначено");
+                startTime != null ? startTime.format(formatter) : "не назначено",
+                duration != null ? duration.toMinutes() : "не назначено");
     }
 }

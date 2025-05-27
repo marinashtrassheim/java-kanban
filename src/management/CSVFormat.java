@@ -2,6 +2,9 @@ package management;
 
 import task.*;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 public final class CSVFormat {
 
     public static String taskToCSVString(Task task) {
@@ -54,11 +57,11 @@ public final class CSVFormat {
 
     public static Task taskFromString(FileBackedTaskManager manager, String value) {
         String[] parts = value.split(",", -1);
-        int id = Integer.parseInt(parts[0].trim());
-        TaskType taskType = TaskType.valueOf(parts[1].trim());
-        String name = parts[2].trim();
-        Status status = Status.valueOf(parts[3].trim());
-        String description = parts[4].trim();
+        int id = Integer.parseInt(parts[0]);
+        TaskType taskType = TaskType.valueOf(parts[1]);
+        String name = parts[2];
+        Status status = Status.valueOf(parts[3]);
+        String description = parts[4];
 
         String startTime = null;
         if (!parts[5].trim().isEmpty()) {

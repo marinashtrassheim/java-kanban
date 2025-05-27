@@ -16,13 +16,7 @@ class InMemoryHistoryManagerTest {
     @BeforeEach
     void setUp() {
         historyManager = new InMemoryHistoryManager();
-        TaskManager taskManager = Managers.getDefault();
-        try {
-            task = new Task("Test Task", "Test Description");
-            taskManager.createTask(task);
-        } catch (exceptions.TaskOverlapException e) {
-            System.out.println(e.getMessage()); // Просто выводим сообщение об ошибке
-        }
+        this.task = new Task("Task", "Description", "16.03.2025 14:30", 120L);
     }
 
     /* Базовый тест на добавление */

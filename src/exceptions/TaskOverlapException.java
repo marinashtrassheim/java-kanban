@@ -1,9 +1,8 @@
 package exceptions;
 
-public class TaskOverlapException extends Exception {
+public class TaskOverlapException extends RuntimeException {
 
-    public TaskOverlapException(String message) {
-        message = "Новое время задачи пересекается с существующими";
+    public TaskOverlapException() {
+        super("Новое время задачи пересекается с существующими");  // Фиксированное сообщение
     }
-
 }
