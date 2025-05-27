@@ -49,6 +49,7 @@ public class InMemoryTaskManager implements TaskManager {
         tasks.put(taskId, task);
         prioritizedTasks.add(task);
     }
+
     /**
      * Добавляет подзадачу в коллекцию подзадач.
      *

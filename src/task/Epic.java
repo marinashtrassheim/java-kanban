@@ -97,7 +97,7 @@ public class Epic extends Task {
     }
 
     public void setEpicStartTime(LocalDateTime epicStartTime) {
-        this.startTime= epicStartTime;
+        this.startTime = epicStartTime;
     }
 
     public LocalDateTime getEpicStartTime() {
@@ -113,7 +113,7 @@ public class Epic extends Task {
     }
 
     public void setEpicDuration(Duration duration) {
-        this.duration= duration;
+        this.duration = duration;
     }
 
     public Duration getEpicDuration() {

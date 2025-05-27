@@ -16,8 +16,8 @@ public class SubTask extends Task {
      *
      * @param name        Название подзадачи
      * @param description Описание подзадачи
-     * @param startTime Дата и время старта работы над задачей
-     * @param duration Длительность работы над задачей в минутах
+     * @param startTime   Дата и время старта работы над задачей
+     * @param duration    Длительность работы над задачей в минутах
      * @param epic        Эпик, к которому относится подзадача
      */
     public SubTask(String name, String description, String startTime, long duration, Epic epic) {
@@ -70,15 +70,15 @@ public class SubTask extends Task {
     @Override
     public String toString() {
         return String.format("""
-            Подзадача {
-                ID = %d
-                Название = '%s'
-                Описание = '%s'
-                Статус = %s
-                ID эпика = %s
-                Время начала = %s
-                Длительность = %s минут
-            }""",
+                        Подзадача {
+                            ID = %d
+                            Название = '%s'
+                            Описание = '%s'
+                            Статус = %s
+                            ID эпика = %s
+                            Время начала = %s
+                            Длительность = %s минут
+                        }""",
                 id,
                 name,
                 description,

@@ -23,8 +23,8 @@ public class Task {
      *
      * @param name        Название задачи
      * @param description Описание задачи
-     * @param startTime Дата и время старта работы над задачей
-     * @param duration Длительность работы над задачей в минутах
+     * @param startTime   Дата и время старта работы над задачей
+     * @param duration    Длительность работы над задачей в минутах
      */
     public Task(String name, String description, String startTime, long duration) {
         this.name = name;
@@ -40,8 +40,8 @@ public class Task {
      * @param name        Название задачи
      * @param description Описание задачи
      * @param status      Статус задачи
-     * @param startTime Дата и время старта работы над задачей
-     * @param duration Длительность работы над задачей в минутах
+     * @param startTime   Дата и время старта работы над задачей
+     * @param duration    Длительность работы над задачей в минутах
      */
     public Task(String name, String description, String startTime, long duration, Status status) {
         this.name = name;
@@ -221,14 +221,14 @@ public class Task {
     @Override
     public String toString() {
         return String.format("""
-            Задача {
-                ID = %d
-                Название = '%s'
-                Описание = '%s'
-                Статус = %s
-                Время начала = %s
-                Длительность = %s минут
-            }""",
+                        Задача {
+                            ID = %d
+                            Название = '%s'
+                            Описание = '%s'
+                            Статус = %s
+                            Время начала = %s
+                            Длительность = %s минут
+                        }""",
                 id,
                 name,
                 description,
