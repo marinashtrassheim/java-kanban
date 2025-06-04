@@ -1,4 +1,4 @@
-package test;
+package manager;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -11,15 +11,12 @@ import java.util.List;
 
 class InMemoryHistoryManagerTest {
     private HistoryManager historyManager;
-    private TaskManager taskManager;
     private Task task;
 
     @BeforeEach
     void setUp() {
         historyManager = new InMemoryHistoryManager();
-        taskManager = Managers.getDefault();
-        task = new Task("Test Task", "Test Description");
-        taskManager.createTask(task);
+        this.task = new Task("Task", "Description", "16.03.2025 14:30", 120L);
     }
 
     /* Базовый тест на добавление */

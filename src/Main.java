@@ -1,50 +1,44 @@
+import exceptions.TaskOverlapException;
 import task.*;
 import management.*;
-
-import java.io.File;
 
 public class Main {
     public static void main(String[] args) {
         //Тестирование текущего спринта
         // Тестирование записи в файл, в строке указываем абсолютный путь, где будет файл
-        FileBackedTaskManager manager = new FileBackedTaskManager("/Users/marinamarina/IdeaProjects/test.txt");
+        InMemoryTaskManager manager = new InMemoryTaskManager();
 
         //Задачи для теста
-        Task task11 = new Task("Task11", "description");
-        manager.createTask(task11);
-        Task task12 = new Task("Task12", "description");
-        manager.createTask(task12);
-        Task taskUpdated12 = new Task("taskUpdated12", "description");
-        manager.createTask(taskUpdated12);
+        Epic epic = new Epic("epic", "desc");
+        try {
+            manager.createEpic(epic);
+        } catch (TaskOverlapException e) {
+            System.out.println(e.getMessage());
+        }
 
-        Epic epic11 = new Epic("Epic11", "desc");
-        manager.createEpic(epic11);
-        Epic epic12 = new Epic("Epic12", "desc");
-        manager.createEpic(epic12);
-        Epic epicUpdated12 = new Epic("epicUpdated12", "desc");
-        manager.createEpic(epicUpdated12);
+//        SubTask subTask00 = new SubTask("Task00", "descrip", "15.03.2025 14:30", 120, epic);
+//        try {
+//            manager.createSubTask(subTask00);
+//        } catch (TaskOverlapException e) {
+//            System.out.println(e.getMessage());
+//        }
+//
+//        SubTask subTask01 = new SubTask("Task01", "descrip", "15.03.2025 18:30", 100, epic);
+//        try {
+//            manager.createSubTask(subTask01);
+//        } catch (TaskOverlapException e) {
+//            System.out.println(e.getMessage());
+//        }
+//
+//        try {
+//            manager.updateSubTask(subTask01, null, null, null, "15.03.2025 14:30", 120L, epic);
+//        } catch (TaskOverlapException e) {
+//            System.out.println(e.getMessage());
+//            System.out.println("не обновилось");
+//        }
 
-        SubTask subTask11 = new SubTask("SubTask11", "desc", epic11);
-        manager.createSubTask(subTask11);
-        SubTask subTask12 = new SubTask("subTask12", "desc", epic11);
-        manager.createSubTask(subTask12);
-        SubTask subTaskUpdated12 = new SubTask("subTaskUpdated12", "desc", epic12);
-        manager.createSubTask(subTaskUpdated12);
+        System.out.println(manager.getAllTasksTypes());
 
-        manager.updateTask(task12, taskUpdated12);
-        manager.updateEpic(epic12, epicUpdated12);
-        manager.updateSubTask(subTask12, subTaskUpdated12);
-        manager.deleteTask(2);
-        manager.deleteEpic(5);
-        manager.deleteSubTask(7);
-        //Проверяем файл
-
-        //Тестируем выгзузку из файла
-        File file = new File("/Users/marinamarina/IdeaProjects/test.txt");
-        FileBackedTaskManager loadManager = FileBackedTaskManager.loadFromFile(file);
-
-        System.out.println("\n=== Просмотр выгрузки из файла ===");
-        System.out.println(loadManager.getAllTasksTypes());
     }
 }
 

@@ -1,12 +1,10 @@
-package test;
+package task;
 
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.BeforeEach;
-import task.Epic;
-import task.SubTask;
 
 class EpicTest {
     private Epic epic1;
@@ -36,8 +34,10 @@ class EpicTest {
     }
 
     @Test
-    public void testAddSubTask_EpicCannotBeItsOwnSubTask() {
-        epic3.setSubtasks(subTask);
-        assertTrue(epic3.getSubtasks().isEmpty());
+    void testSubTaskAssociation() {
+        // Проверяем, что подзадача правильно ассоциируется с эпиком
+        epic1.setPrioritizedSubTasks(subTask);
+        assertTrue(epic1.getPrioritizedSubTasks().contains(subTask));
+        assertEquals(epic1, subTask.getEpic());
     }
 }
